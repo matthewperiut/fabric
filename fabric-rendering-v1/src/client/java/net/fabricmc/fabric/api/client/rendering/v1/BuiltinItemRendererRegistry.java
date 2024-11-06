@@ -30,6 +30,7 @@ import net.fabricmc.fabric.impl.client.rendering.BuiltinItemRendererRegistryImpl
 /**
  * This registry holds {@linkplain DynamicItemRenderer builtin item renderers} for items.
  */
+// TODO 1.21.4, class_10444/class_10515
 public interface BuiltinItemRendererRegistry {
 	/**
 	 * The singleton instance of the renderer registry.

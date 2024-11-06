@@ -195,7 +195,7 @@ public class BiomeModificationContextImpl implements BiomeModificationContext {
 
 		@Override
 		public void setMusicVolume(float volume) {
-			effects.field_55050 = volume;
+			effects.musicVolume = volume;
 		}
 	}
 

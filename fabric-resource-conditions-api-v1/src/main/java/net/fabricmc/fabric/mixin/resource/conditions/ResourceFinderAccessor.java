@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.impl.client.rendering.v0;
+package net.fabricmc.fabric.mixin.resource.conditions;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.InvalidateRenderStateCallback;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-public class RenderingCallbackInvoker implements ClientModInitializer {
-	@Override
-	public void onInitializeClient() {
-		InvalidateRenderStateCallback.EVENT.register(() -> net.fabricmc.fabric.api.client.render.InvalidateRenderStateCallback.EVENT.invoker().onInvalidate());
-	}
+import net.minecraft.resource.ResourceFinder;
+
+@Mixin(ResourceFinder.class)
+public interface ResourceFinderAccessor {
+	@Accessor
+	String getDirectoryName();
 }

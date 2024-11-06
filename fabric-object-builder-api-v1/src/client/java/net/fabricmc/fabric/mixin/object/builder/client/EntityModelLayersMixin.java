@@ -46,7 +46,7 @@ public class EntityModelLayersMixin {
 	}
 
 	@Inject(method = "createHangingSign", at = @At("HEAD"), cancellable = true)
-	private static void createHangingSign(WoodType type, HangingSignBlockEntityRenderer.class_10381 attachmentType, CallbackInfoReturnable<EntityModelLayer> cir) {
+	private static void createHangingSign(WoodType type, HangingSignBlockEntityRenderer.AttachmentType attachmentType, CallbackInfoReturnable<EntityModelLayer> cir) {
 		if (type.name().indexOf(Identifier.NAMESPACE_SEPARATOR) != -1) {
 			Identifier identifier = Identifier.of(type.name());
 			cir.setReturnValue(new EntityModelLayer(identifier.withPath(path -> {

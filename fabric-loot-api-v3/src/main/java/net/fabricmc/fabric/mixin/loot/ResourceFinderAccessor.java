@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package net.fabricmc.fabric.mixin.object.builder.client;
+package net.fabricmc.fabric.mixin.loot;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.item.ClampedModelPredicateProvider;
-import net.minecraft.client.item.ModelPredicateProviderRegistry;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
+import net.minecraft.resource.ResourceFinder;
 
-// mixin doesn't care about descriptor, must put two "register" accessors in different places
-@Mixin(ModelPredicateProviderRegistry.class)
-public interface ModelPredicateProviderRegistrySpecificAccessor {
-	@Invoker
-	static void callRegister(Item item, Identifier id, ClampedModelPredicateProvider provider) {
-		throw new AssertionError("mixin dummy");
-	}
+@Mixin(ResourceFinder.class)
+public interface ResourceFinderAccessor {
+	@Accessor
+	String getDirectoryName();
 }
