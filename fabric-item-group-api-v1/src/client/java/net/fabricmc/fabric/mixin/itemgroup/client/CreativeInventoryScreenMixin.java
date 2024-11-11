@@ -72,7 +72,7 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	private void init(CallbackInfo info) {
 		currentPage = getPage(selectedTab);
 
-		int xpos = x + 170;
+		int xpos = x + 166;
 		int ypos = y + 4;
 
 		CreativeInventoryScreen self = (CreativeInventoryScreen) (Object) this;
