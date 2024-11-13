@@ -16,10 +16,10 @@
 
 package net.fabricmc.fabric.impl.recipe.ingredient.builtin;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -84,14 +84,14 @@ public class ComponentsIngredient implements CustomIngredient {
 	}
 
 	@Override
-	public List<RegistryEntry<Item>> getMatchingItems() {
+	public Stream<RegistryEntry<Item>> getMatchingItems() {
 		return base.getMatchingItems();
 	}
 
 	@Override
 	public SlotDisplay toDisplay() {
 		return new SlotDisplay.CompositeSlotDisplay(
-			base.getMatchingItems().stream().map(this::createEntryDisplay).toList()
+			base.getMatchingItems().map(this::createEntryDisplay).toList()
 		);
 	}
 

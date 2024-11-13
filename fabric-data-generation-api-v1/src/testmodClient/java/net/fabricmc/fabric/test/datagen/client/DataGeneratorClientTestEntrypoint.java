@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
+import net.minecraft.client.data.BlockStateModelGenerator;
+import net.minecraft.client.data.ItemModelGenerator;
 import net.minecraft.client.texture.atlas.AtlasSource;
 import net.minecraft.client.texture.atlas.AtlasSourceManager;
 import net.minecraft.client.texture.atlas.DirectoryAtlasSource;
 import net.minecraft.data.DataOutput;
-import net.minecraft.data.client.BlockStateModelGenerator;
-import net.minecraft.data.client.ItemModelGenerator;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 

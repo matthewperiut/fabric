@@ -91,7 +91,7 @@ public class RegistryLoaderMixin {
 			},
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/resource/ResourceFinder;method_65309(Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/resource/ResourceFinder;"
+					target = "Lnet/minecraft/resource/ResourceFinder;json(Lnet/minecraft/registry/RegistryKey;)Lnet/minecraft/resource/ResourceFinder;"
 			)
 	)
 	private static ResourceFinder prependDirectoryWithNamespace(RegistryKey<? extends Registry<?>> registryKey, Operation<ResourceFinder> original) {

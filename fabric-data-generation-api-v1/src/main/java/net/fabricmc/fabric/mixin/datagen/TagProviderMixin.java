@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-import net.minecraft.data.server.tag.TagProvider;
+import net.minecraft.data.tag.TagProvider;
 import net.minecraft.registry.tag.TagBuilder;
 
 import net.fabricmc.fabric.impl.datagen.FabricTagBuilder;

@@ -29,8 +29,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.class_10434;
-import net.minecraft.data.client.ModelProvider;
+import net.minecraft.client.data.ModelProvider;
+import net.minecraft.client.item.ItemAsset;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -39,11 +39,11 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.impl.datagen.client.FabricModelProviderDefinitions;
 
-@Mixin(ModelProvider.class_10407.class)
-public class ModelProviderItemDefinitionsMixin implements FabricModelProviderDefinitions {
+@Mixin(ModelProvider.ItemAssets.class)
+public class ModelProviderItemAssetsMixin implements FabricModelProviderDefinitions {
 	@Shadow
 	@Final
-	private Map<Item, class_10434> field_55249;
+	private Map<Item, ItemAsset> ITEM_ASSETS;
 	@Unique
 	private FabricDataOutput fabricDataOutput;
 
@@ -53,12 +53,12 @@ public class ModelProviderItemDefinitionsMixin implements FabricModelProviderDef
 	}
 
 	@WrapOperation(method = "method_65470", at = @At(value = "INVOKE", target = "Ljava/util/Map;containsKey(Ljava/lang/Object;)Z", ordinal = 1, remap = false))
-	private boolean filterItemsForProcessingMod(Map<Item, class_10434> map, Object o, Operation<Boolean> original) {
+	private boolean filterItemsForProcessingMod(Map<Item, ItemAsset> map, Object o, Operation<Boolean> original) {
 		BlockItem blockItem = (BlockItem) o;
 
 		if (fabricDataOutput != null) {
 			// Only generate the item model if the block state json was registered
-			if (field_55249.containsKey(blockItem)) {
+			if (ITEM_ASSETS.containsKey(blockItem)) {
 				return false;
 			}
 
@@ -71,7 +71,7 @@ public class ModelProviderItemDefinitionsMixin implements FabricModelProviderDef
 		return original.call(map, blockItem);
 	}
 
-	@Redirect(method = "method_65469", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;", ordinal = 0, remap = false))
+	@Redirect(method = "resolveAndValidate", at = @At(value = "INVOKE", target = "Ljava/util/stream/Stream;filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;", ordinal = 0, remap = false))
 	private Stream<RegistryEntry.Reference<Item>> filterItemsForProcessingMod(Stream<RegistryEntry.Reference<Item>> instance, Predicate<RegistryEntry.Reference<Item>> predicate) {
 		return instance.filter((item) -> {
 			if (fabricDataOutput != null) {

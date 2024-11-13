@@ -17,6 +17,7 @@
 package net.fabricmc.fabric.impl.recipe.ingredient.builtin;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -49,11 +50,10 @@ public class DifferenceIngredient implements CustomIngredient {
 	}
 
 	@Override
-	public List<RegistryEntry<Item>> getMatchingItems() {
-		final List<RegistryEntry<Item>> subtractedMatchingItems = subtracted.getMatchingItems();
-		return base.getMatchingItems().stream()
-				.filter(registryEntry -> !subtractedMatchingItems.contains(registryEntry))
-				.toList();
+	public Stream<RegistryEntry<Item>> getMatchingItems() {
+		final List<RegistryEntry<Item>> subtractedMatchingItems = subtracted.getMatchingItems().toList();
+		return base.getMatchingItems()
+				.filter(registryEntry -> !subtractedMatchingItems.contains(registryEntry));
 	}
 
 	@Override

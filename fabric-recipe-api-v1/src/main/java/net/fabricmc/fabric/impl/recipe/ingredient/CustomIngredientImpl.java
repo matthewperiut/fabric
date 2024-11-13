@@ -16,11 +16,11 @@
 
 package net.fabricmc.fabric.impl.recipe.ingredient;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -93,12 +93,8 @@ public class CustomIngredientImpl extends Ingredient {
 	}
 
 	@Override
-	public List<RegistryEntry<Item>> getMatchingItems() {
-		if (this.matchingItems == null) {
-			this.matchingItems = customIngredient.getMatchingItems();
-		}
-
-		return this.matchingItems;
+	public Stream<RegistryEntry<Item>> getMatchingItems() {
+		return customIngredient.getMatchingItems();
 	}
 
 	@Override
