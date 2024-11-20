@@ -43,7 +43,7 @@ import net.fabricmc.fabric.impl.datagen.client.FabricModelProviderDefinitions;
 public class ModelProviderItemAssetsMixin implements FabricModelProviderDefinitions {
 	@Shadow
 	@Final
-	private Map<Item, ItemAsset> ITEM_ASSETS;
+	private Map<Item, ItemAsset> itemAssets;
 	@Unique
 	private FabricDataOutput fabricDataOutput;
 
@@ -58,7 +58,7 @@ public class ModelProviderItemAssetsMixin implements FabricModelProviderDefiniti
 
 		if (fabricDataOutput != null) {
 			// Only generate the item model if the block state json was registered
-			if (ITEM_ASSETS.containsKey(blockItem)) {
+			if (itemAssets.containsKey(blockItem)) {
 				return true;
 			}
 

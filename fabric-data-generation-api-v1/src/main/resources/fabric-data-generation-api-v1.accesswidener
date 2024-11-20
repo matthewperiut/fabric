@@ -213,7 +213,7 @@ transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	
 transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	registerBuiltinWithParticle	(Lnet/minecraft/block/Block;Lnet/minecraft/item/Item;)V
 transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	registerBuiltinWithParticle	(Lnet/minecraft/block/Block;Lnet/minecraft/util/Identifier;)V
 transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	uploadParticleModel	(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)Lnet/minecraft/util/Identifier;
-transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	registerBuilltin	(Lnet/minecraft/block/Block;)V
+transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	registerBuiltin	(Lnet/minecraft/block/Block;)V
 transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	registerWoolAndCarpet	(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V
 transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	registerFlowerbed	(Lnet/minecraft/block/Block;)V
 transitive-accessible	method	net/minecraft/client/data/BlockStateModelGenerator	registerRandomHorizontalRotations	(Lnet/minecraft/client/data/TexturedModel$Factory;[Lnet/minecraft/block/Block;)V
