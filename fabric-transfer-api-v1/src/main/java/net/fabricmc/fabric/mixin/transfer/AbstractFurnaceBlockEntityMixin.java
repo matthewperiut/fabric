@@ -42,7 +42,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableContainerB
 	@Shadow
 	protected DefaultedList<ItemStack> inventory;
 	@Shadow
-	int cookTime;
+	int field_55576;
 	@Shadow
 	int cookTimeTotal;
 	@Unique
@@ -77,7 +77,7 @@ public abstract class AbstractFurnaceBlockEntityMixin extends LockableContainerB
 
 			if (!bl && this.world instanceof ServerWorld world) {
 				this.cookTimeTotal = getCookTime(world, (AbstractFurnaceBlockEntity) (Object) this);
-				this.cookTime = 0;
+				this.field_55576 = 0;
 			}
 		}
 	}
