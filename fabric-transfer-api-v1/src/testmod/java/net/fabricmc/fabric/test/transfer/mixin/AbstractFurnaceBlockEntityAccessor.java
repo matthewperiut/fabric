@@ -23,6 +23,6 @@ import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
 public interface AbstractFurnaceBlockEntityAccessor {
-	@Accessor("field_55576")
-	int getCookTime();
+	@Accessor
+	int getCookingTimeSpent();
 }
