@@ -271,7 +271,7 @@ allprojects {
 
 	checkstyle {
 		configFile = rootProject.file("checkstyle.xml")
-		toolVersion = "10.12.1"
+		toolVersion = "10.20.2"
 	}
 
 	tasks.withType(AbstractArchiveTask).configureEach {

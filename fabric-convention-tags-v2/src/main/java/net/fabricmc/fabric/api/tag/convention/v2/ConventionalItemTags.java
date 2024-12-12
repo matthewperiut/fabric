@@ -275,8 +275,8 @@ public final class ConventionalItemTags {
 	 * Tag that holds all blocks and items that can be dyed a specific color.
 	 * (Does not include color blending items like leather armor.
 	 * Use {@link net.minecraft.registry.tag.ItemTags#DYEABLE} tag instead for color blending items)
-	 * <p></p>
-	 * Note: Use custom ingredients in recipes to do tag intersections and/or tag exclusions
+	 *
+	 * <p>Note: Use custom ingredients in recipes to do tag intersections and/or tag exclusions
 	 * to make more powerful recipes utilizing multiple tags such as dyed tags for an ingredient.
 	 * See {@link net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients}
 	 * children classes for various custom ingredients available that can also be used in data generation.
@@ -303,8 +303,8 @@ public final class ConventionalItemTags {
 	/**
 	 * A storage block is generally a block that has a recipe to craft a bulk of 1 kind of resource to a block
 	 * and has a mirror recipe to reverse the crafting with no loss in resources.
-	 * <p></p>
-	 * Honey Block is special in that the reversing recipe is not a perfect mirror of the crafting recipe
+	 *
+	 * <p>Honey Block is special in that the reversing recipe is not a perfect mirror of the crafting recipe
 	 * and so, it is considered a special case and not given a storage block tag.
 	 */
 	public static final TagKey<Item> STORAGE_BLOCKS = register("storage_blocks");
