@@ -753,18 +753,41 @@ dependencies {
 	}
 }
 
-remapJar {
-	afterEvaluate {
-		subprojects.each {
-			if (it.name in devOnlyModules || metaProjects.contains(it.name)) {
-				return
-			}
-
-			// Include the signed or none signed jar from the sub project.
-			nestedJars.from project("${it.path}").tasks.getByName("signRemapJar")
-		}
+configurations {
+	nestedJars {
+		transitive = false
 	}
 }
+
+dependencies {
+	subprojects.each {
+		if (it.name in devOnlyModules || metaProjects.contains(it.name)) {
+			return
+		}
+
+		nestedJars project("${it.path}")
+	}
+}
+
+remapJar {
+	nestedJars.from configurations.nestedJars
+}
+
+// Attempt to create a single jar with all files from all nested jars, this will fail if there are duplicate files.
+tasks.register("checkNoDuplicateFiles", Zip) {
+	inputs.files configurations.nestedJars
+	destinationDirectory = layout.buildDirectory.dir("test")
+
+	from {
+		configurations.nestedJars.files.collect { zipTree(it) }
+	}
+
+	// We expect these files to be duplicated, so exclude them.
+	exclude 'META-INF/**'
+	exclude 'fabric.mod.json'
+}
+
+check.dependsOn "checkNoDuplicateFiles"
 
 publishMods {
 	file = signRemapJar.output
