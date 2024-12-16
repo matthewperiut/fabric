@@ -26,15 +26,25 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
+// Vanilla doesn't mark namespaces in the directories of tags and dynamic registry elements at all,
+// so we prepend the directories with the namespace if it's a modded registry id.
 @Mixin(RegistryKeys.class)
 public class RegistryKeysMixin {
-	@ModifyReturnValue(method = "getTagPath", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getPath", at = @At("RETURN"))
 	private static String prependDirectoryWithNamespace(String original, @Local(argsOnly = true) RegistryKey<? extends Registry<?>> registryRef) {
 		Identifier id = registryRef.getValue();
 
-		// Vanilla doesn't mark namespaces in the directories of tags at all,
-		// so we prepend the directories with the namespace if it's a modded registry id.
-		// No need to check DIRECTORIES, since this is only used by vanilla registries.
+		if (!id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE)) {
+			return id.getNamespace() + "/" + id.getPath();
+		}
+
+		return original;
+	}
+
+	@ModifyReturnValue(method = "getTagPath", at = @At("RETURN"))
+	private static String prependTagDirectoryWithNamespace(String original, @Local(argsOnly = true) RegistryKey<? extends Registry<?>> registryRef) {
+		Identifier id = registryRef.getValue();
+
 		if (!id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE)) {
 			return "tags/" + id.getNamespace() + "/" + id.getPath();
 		}
