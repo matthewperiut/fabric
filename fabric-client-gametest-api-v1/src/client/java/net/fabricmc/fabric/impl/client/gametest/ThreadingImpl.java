@@ -26,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.client.MinecraftClient;
+
 /**
  * <h1>Implementation notes</h1>
  *
@@ -68,6 +70,11 @@ public final class ThreadingImpl {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger("fabric-client-gametest-api-v1");
 
+	private static final boolean DISABLE_JOIN_ASYNC_STACK_TRACES = System.getProperty("fabric.client.gametest.disableJoinAsyncStackTraces") != null;
+	private static final String THREAD_IMPL_CLASS_NAME = ThreadingImpl.class.getName();
+	private static final String TASK_ON_THIS_THREAD_METHOD_NAME = "runTaskOnThisThread";
+	private static final String TASK_ON_OTHER_THREAD_METHOD_NAME = "runTaskOnOtherThread";
+
 	public static final int PHASE_TICK = 0;
 	public static final int PHASE_SERVER_TASKS = 1;
 	public static final int PHASE_CLIENT_TASKS = 2;
@@ -75,6 +82,7 @@ public final class ThreadingImpl {
 	private static final int PHASE_MASK = 3;
 
 	public static final Phaser PHASER = new Phaser();
+	private static volatile boolean enablePhases = true;
 
 	public static volatile boolean isClientRunning = false;
 	public static volatile boolean clientCanAcceptTasks = false;
@@ -87,19 +95,30 @@ public final class ThreadingImpl {
 	@Nullable
 	public static Thread testThread = null;
 	public static final Semaphore TEST_SEMAPHORE = new Semaphore(0);
+	@Nullable
+	public static Throwable testFailureException = null;
 
 	@Nullable
 	public static Runnable taskToRun = null;
 
+	private static volatile boolean gameCrashed = false;
+
 	public static void enterPhase(int phase) {
-		while ((PHASER.getPhase() & PHASE_MASK) != phase) {
+		while (enablePhases && (PHASER.getPhase() & PHASE_MASK) != phase) {
 			PHASER.arriveAndAwaitAdvance();
 		}
 
-		PHASER.arriveAndAwaitAdvance();
+		if (enablePhases) {
+			PHASER.arriveAndAwaitAdvance();
+		}
 	}
 
-	public static void runTestThread(Runnable test) {
+	public static void setGameCrashed() {
+		enablePhases = false;
+		gameCrashed = true;
+	}
+
+	public static void runTestThread(Runnable testRunner) {
 		Preconditions.checkState(testThread == null, "There is already a test thread running");
 
 		testThread = new Thread(() -> {
@@ -107,51 +126,64 @@ public final class ThreadingImpl {
 			enterPhase(PHASE_TEST);
 
 			try {
-				test.run();
+				testRunner.run();
 			} catch (Throwable e) {
-				LOGGER.error("Failed to run client gametests", e);
-				System.exit(1);
+				testFailureException = e;
 			} finally {
-				PHASER.arriveAndDeregister();
-
 				if (clientCanAcceptTasks) {
-					CLIENT_SEMAPHORE.release();
+					runOnClient(() -> MinecraftClient.getInstance().scheduleStop());
 				}
 
-				if (serverCanAcceptTasks) {
-					SERVER_SEMAPHORE.release();
+				if (testFailureException != null) {
+					// Log this now in case the client has stopped or is otherwise unable to rethrow our exception
+					LOGGER.error("Client gametests failed with an exception", testFailureException);
 				}
 
-				testThread = null;
+				deregisterTestThread();
 			}
 		});
 		testThread.setName("Test thread");
+		testThread.setDaemon(true);
 		testThread.start();
+	}
+
+	private static void deregisterTestThread() {
+		testThread = null;
+		enablePhases = false;
+		PHASER.arriveAndDeregister();
+
+		if (clientCanAcceptTasks) {
+			CLIENT_SEMAPHORE.release();
+		}
+
+		if (serverCanAcceptTasks) {
+			SERVER_SEMAPHORE.release();
+		}
 	}
 
 	public static void checkOnGametestThread(String methodName) {
 		Preconditions.checkState(Thread.currentThread() == testThread, "%s can only be called from the client gametest thread", methodName);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <E extends Throwable> void runOnClient(FailableRunnable<E> action) throws E {
 		Preconditions.checkNotNull(action, "action");
 		checkOnGametestThread("runOnClient");
 		Preconditions.checkState(clientCanAcceptTasks, "runOnClient called when no client is running");
+		runTaskOnOtherThread(action, CLIENT_SEMAPHORE);
+	}
 
+	public static <E extends Throwable> void runOnServer(FailableRunnable<E> action) throws E {
+		Preconditions.checkNotNull(action, "action");
+		checkOnGametestThread("runOnServer");
+		Preconditions.checkState(serverCanAcceptTasks, "runOnServer called when no server is running");
+		runTaskOnOtherThread(action, SERVER_SEMAPHORE);
+	}
+
+	private static <E extends Throwable> void runTaskOnOtherThread(FailableRunnable<E> action, Semaphore clientOrServerSemaphore) throws E {
 		MutableObject<E> thrown = new MutableObject<>();
-		taskToRun = () -> {
-			try {
-				action.run();
-			} catch (Throwable e) {
-				thrown.setValue((E) e);
-			} finally {
-				taskToRun = null;
-				TEST_SEMAPHORE.release();
-			}
-		};
+		taskToRun = () -> runTaskOnThisThread(action, thrown);
 
-		CLIENT_SEMAPHORE.release();
+		clientOrServerSemaphore.release();
 
 		try {
 			TEST_SEMAPHORE.acquire();
@@ -160,39 +192,73 @@ public final class ThreadingImpl {
 		}
 
 		if (thrown.getValue() != null) {
+			joinAsyncStackTrace(thrown.getValue());
 			throw thrown.getValue();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Throwable> void runOnServer(FailableRunnable<E> action) throws E {
-		Preconditions.checkNotNull(action, "action");
-		checkOnGametestThread("runOnServer");
-		Preconditions.checkState(serverCanAcceptTasks, "runOnServer called when no server is running");
-
-		MutableObject<E> thrown = new MutableObject<>();
-		taskToRun = () -> {
-			try {
-				action.run();
-			} catch (Throwable e) {
-				thrown.setValue((E) e);
-			} finally {
-				taskToRun = null;
-				TEST_SEMAPHORE.release();
-			}
-		};
-
-		SERVER_SEMAPHORE.release();
-
+	private static <E extends Throwable> void runTaskOnThisThread(FailableRunnable<E> action, MutableObject<E> thrown) {
 		try {
-			TEST_SEMAPHORE.acquire();
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			action.run();
+		} catch (Throwable e) {
+			thrown.setValue((E) e);
+		} finally {
+			taskToRun = null;
+			TEST_SEMAPHORE.release();
+		}
+	}
+
+	private static void joinAsyncStackTrace(Throwable e) {
+		if (DISABLE_JOIN_ASYNC_STACK_TRACES) {
+			return;
 		}
 
-		if (thrown.getValue() != null) {
-			throw thrown.getValue();
+		// find the end of the relevant part of the stack trace on the other thread
+		StackTraceElement[] otherThreadStackTrace = e.getStackTrace();
+
+		if (otherThreadStackTrace == null) {
+			return;
 		}
+
+		int otherThreadIndex = otherThreadStackTrace.length - 1;
+
+		for (; otherThreadIndex >= 0; otherThreadIndex--) {
+			StackTraceElement element = otherThreadStackTrace[otherThreadIndex];
+
+			if (THREAD_IMPL_CLASS_NAME.equals(element.getClassName()) && TASK_ON_THIS_THREAD_METHOD_NAME.equals(element.getMethodName())) {
+				break;
+			}
+		}
+
+		if (otherThreadIndex == -1) {
+			// couldn't find stack trace element
+			return;
+		}
+
+		// find the start of the relevant part of the stack trace on the test thread
+		StackTraceElement[] thisThreadStackTrace = Thread.currentThread().getStackTrace();
+		int thisThreadIndex = 0;
+
+		for (; thisThreadIndex < thisThreadStackTrace.length; thisThreadIndex++) {
+			StackTraceElement element = thisThreadStackTrace[thisThreadIndex];
+
+			if (THREAD_IMPL_CLASS_NAME.equals(element.getClassName()) && TASK_ON_OTHER_THREAD_METHOD_NAME.equals(element.getMethodName())) {
+				break;
+			}
+		}
+
+		if (thisThreadIndex == thisThreadStackTrace.length) {
+			// couldn't find stack trace element
+			return;
+		}
+
+		// join the stack traces
+		StackTraceElement[] joinedStackTrace = new StackTraceElement[(otherThreadIndex + 1) + 1 + (thisThreadStackTrace.length - thisThreadIndex)];
+		System.arraycopy(otherThreadStackTrace, 0, joinedStackTrace, 0, otherThreadIndex + 1);
+		joinedStackTrace[otherThreadIndex + 1] = new StackTraceElement("Async Stack Trace", ".", null, 1);
+		System.arraycopy(thisThreadStackTrace, thisThreadIndex, joinedStackTrace, otherThreadIndex + 2, thisThreadStackTrace.length - thisThreadIndex);
+		e.setStackTrace(joinedStackTrace);
 	}
 
 	public static void runTick() {
@@ -207,5 +273,17 @@ public final class ThreadingImpl {
 		}
 
 		enterPhase(PHASE_TEST);
+
+		// Check if the game has crashed during this tick. If so, don't do any more work in the test
+		if (gameCrashed) {
+			deregisterTestThread();
+
+			try {
+				// wait until game is closed
+				new Semaphore(0).acquire();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }
