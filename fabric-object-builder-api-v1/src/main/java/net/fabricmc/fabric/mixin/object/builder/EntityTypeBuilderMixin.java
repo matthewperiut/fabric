@@ -47,8 +47,10 @@ public abstract class EntityTypeBuilderMixin<T extends Entity> implements Fabric
 	public abstract EntityType<T> build(RegistryKey<EntityType<?>> registryKey);
 
 	@Unique
+	@Nullable
 	private Boolean alwaysUpdateVelocity = null;
 	@Unique
+	@Nullable
 	private Boolean canPotentiallyExecuteCommands = null;
 
 	@Unique

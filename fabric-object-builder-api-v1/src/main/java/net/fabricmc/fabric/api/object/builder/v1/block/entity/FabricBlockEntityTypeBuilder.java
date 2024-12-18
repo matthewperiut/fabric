@@ -38,7 +38,8 @@ import net.fabricmc.fabric.impl.object.builder.ExtendedBlockEntityType;
 public final class FabricBlockEntityTypeBuilder<T extends BlockEntity> {
 	private final Factory<? extends T> factory;
 	private final Set<Block> blocks = new HashSet<>();
-	private boolean canPotentiallyExecuteCommands = false;
+	@Nullable
+	private Boolean canPotentiallyExecuteCommands = null;
 
 	private FabricBlockEntityTypeBuilder(Factory<? extends T> factory) {
 		this.factory = factory;
