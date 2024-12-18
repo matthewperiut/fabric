@@ -27,9 +27,12 @@ for (def sourceSet in [
 	clean.dependsOn cleanTask
 }
 
-class GenerateImplPackageInfos extends DefaultTask {
+abstract class GenerateImplPackageInfos extends DefaultTask {
 	@InputFile
 	File header
+
+	@Input
+	abstract Property<String> getProjectName()
 
 	@SkipWhenEmpty
 	@InputDirectory
@@ -37,6 +40,10 @@ class GenerateImplPackageInfos extends DefaultTask {
 
 	@OutputDirectory
 	final DirectoryProperty outputDir = project.objects.directoryProperty()
+
+	GenerateImplPackageInfos() {
+		projectName.set(project.name)
+	}
 
 	@TaskAction
 	def run() {
@@ -66,7 +73,7 @@ class GenerateImplPackageInfos extends DefaultTask {
 						def packageName = relativePath.toString().replace(File.separator, '.')
 						it.write("""$headerText
 						|/**
-						| * Implementation code for ${project.name}.
+						| * Implementation code for ${projectName.get()}.
 						| */
 						|@ApiStatus.Internal
 						|package $packageName;
