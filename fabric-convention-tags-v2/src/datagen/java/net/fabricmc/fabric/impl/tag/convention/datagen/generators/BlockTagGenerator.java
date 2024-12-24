@@ -63,11 +63,25 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 				.add(Blocks.GRANITE)
 				.add(Blocks.TUFF)
 				.add(Blocks.DEEPSLATE);
-		getOrCreateTagBuilder(ConventionalBlockTags.COBBLESTONES)
-				.add(Blocks.COBBLESTONE)
-				.add(Blocks.MOSSY_COBBLESTONE)
-				.add(Blocks.COBBLED_DEEPSLATE)
+		getOrCreateTagBuilder(ConventionalBlockTags.NORMAL_COBBLESTONES)
+				.add(Blocks.COBBLESTONE);
+		getOrCreateTagBuilder(ConventionalBlockTags.MOSSY_COBBLESTONES)
+				.add(Blocks.MOSSY_COBBLESTONE);
+		getOrCreateTagBuilder(ConventionalBlockTags.INFESTED_COBBLESTONES)
 				.add(Blocks.INFESTED_COBBLESTONE);
+		getOrCreateTagBuilder(ConventionalBlockTags.DEEPSLATE_COBBLESTONES)
+				.add(Blocks.COBBLED_DEEPSLATE);
+		getOrCreateTagBuilder(ConventionalBlockTags.COBBLESTONES)
+				.addOptionalTag(ConventionalBlockTags.NORMAL_COBBLESTONES)
+				.addOptionalTag(ConventionalBlockTags.MOSSY_COBBLESTONES)
+				.addOptionalTag(ConventionalBlockTags.INFESTED_COBBLESTONES)
+				.addOptionalTag(ConventionalBlockTags.DEEPSLATE_COBBLESTONES);
+		getOrCreateTagBuilder(ConventionalBlockTags.NETHERRACKS)
+				.add(Blocks.NETHERRACK);
+		getOrCreateTagBuilder(ConventionalBlockTags.END_STONES)
+				.add(Blocks.END_STONE);
+		getOrCreateTagBuilder(ConventionalBlockTags.GRAVELS)
+				.add(Blocks.GRAVEL);
 		getOrCreateTagBuilder(ConventionalBlockTags.NORMAL_OBSIDIANS)
 				.add(Blocks.OBSIDIAN);
 		getOrCreateTagBuilder(ConventionalBlockTags.CRYING_OBSIDIANS)
@@ -76,28 +90,99 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 				.addOptionalTag(ConventionalBlockTags.NORMAL_OBSIDIANS)
 				.addOptionalTag(ConventionalBlockTags.CRYING_OBSIDIANS);
 
-		getOrCreateTagBuilder(ConventionalBlockTags.QUARTZ_ORES)
-				.add(Blocks.NETHER_QUARTZ_ORE);
+		getOrCreateTagBuilder(ConventionalBlockTags.COAL_ORES)
+				.addOptionalTag(BlockTags.COAL_ORES);
+		getOrCreateTagBuilder(ConventionalBlockTags.COPPER_ORES)
+				.addOptionalTag(BlockTags.COPPER_ORES);
+		getOrCreateTagBuilder(ConventionalBlockTags.DIAMOND_ORES)
+				.addOptionalTag(BlockTags.DIAMOND_ORES);
+		getOrCreateTagBuilder(ConventionalBlockTags.EMERALD_ORES)
+				.addOptionalTag(BlockTags.EMERALD_ORES);
+		getOrCreateTagBuilder(ConventionalBlockTags.GOLD_ORES)
+				.addOptionalTag(BlockTags.GOLD_ORES);
+		getOrCreateTagBuilder(ConventionalBlockTags.IRON_ORES)
+				.addOptionalTag(BlockTags.IRON_ORES);
+		getOrCreateTagBuilder(ConventionalBlockTags.LAPIS_ORES)
+				.addOptionalTag(BlockTags.LAPIS_ORES);
 		getOrCreateTagBuilder(ConventionalBlockTags.NETHERITE_SCRAP_ORES)
 				.add(Blocks.ANCIENT_DEBRIS);
+		getOrCreateTagBuilder(ConventionalBlockTags.REDSTONE_ORES)
+				.addOptionalTag(BlockTags.REDSTONE_ORES);
+		getOrCreateTagBuilder(ConventionalBlockTags.QUARTZ_ORES)
+				.add(Blocks.NETHER_QUARTZ_ORE);
 		getOrCreateTagBuilder(ConventionalBlockTags.ORES)
-				.addOptionalTag(BlockTags.COAL_ORES)
-				.addOptionalTag(BlockTags.COPPER_ORES)
-				.addOptionalTag(BlockTags.DIAMOND_ORES)
-				.addOptionalTag(BlockTags.EMERALD_ORES)
-				.addOptionalTag(BlockTags.GOLD_ORES)
-				.addOptionalTag(BlockTags.IRON_ORES)
-				.addOptionalTag(BlockTags.LAPIS_ORES)
+				.addOptionalTag(ConventionalBlockTags.COAL_ORES)
+				.addOptionalTag(ConventionalBlockTags.COPPER_ORES)
+				.addOptionalTag(ConventionalBlockTags.DIAMOND_ORES)
+				.addOptionalTag(ConventionalBlockTags.EMERALD_ORES)
+				.addOptionalTag(ConventionalBlockTags.GOLD_ORES)
+				.addOptionalTag(ConventionalBlockTags.IRON_ORES)
+				.addOptionalTag(ConventionalBlockTags.LAPIS_ORES)
 				.addOptionalTag(ConventionalBlockTags.NETHERITE_SCRAP_ORES)
-				.addOptionalTag(BlockTags.REDSTONE_ORES)
+				.addOptionalTag(ConventionalBlockTags.REDSTONE_ORES)
 				.addOptionalTag(ConventionalBlockTags.QUARTZ_ORES);
+
+		getOrCreateTagBuilder(ConventionalBlockTags.ORE_BEARING_GROUND_DEEPSLATE)
+				.add(Blocks.DEEPSLATE);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORE_BEARING_GROUND_NETHERRACK)
+				.add(Blocks.NETHERRACK);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORE_BEARING_GROUND_STONE)
+				.add(Blocks.STONE);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORE_RATES_DENSE)
+				.add(Blocks.COPPER_ORE)
+				.add(Blocks.DEEPSLATE_COPPER_ORE)
+				.add(Blocks.DEEPSLATE_LAPIS_ORE)
+				.add(Blocks.DEEPSLATE_REDSTONE_ORE)
+				.add(Blocks.LAPIS_ORE)
+				.add(Blocks.REDSTONE_ORE);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORE_RATES_SINGULAR)
+				.add(Blocks.ANCIENT_DEBRIS)
+				.add(Blocks.COAL_ORE)
+				.add(Blocks.DEEPSLATE_COAL_ORE)
+				.add(Blocks.DEEPSLATE_DIAMOND_ORE)
+				.add(Blocks.DEEPSLATE_EMERALD_ORE)
+				.add(Blocks.DEEPSLATE_GOLD_ORE)
+				.add(Blocks.DEEPSLATE_IRON_ORE)
+				.add(Blocks.DIAMOND_ORE)
+				.add(Blocks.EMERALD_ORE)
+				.add(Blocks.GOLD_ORE)
+				.add(Blocks.IRON_ORE)
+				.add(Blocks.NETHER_QUARTZ_ORE);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORE_RATES_SPARSE)
+				.add(Blocks.NETHER_GOLD_ORE);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORES_IN_GROUND_DEEPSLATE)
+				.add(Blocks.DEEPSLATE_COAL_ORE)
+				.add(Blocks.DEEPSLATE_COPPER_ORE)
+				.add(Blocks.DEEPSLATE_DIAMOND_ORE)
+				.add(Blocks.DEEPSLATE_EMERALD_ORE)
+				.add(Blocks.DEEPSLATE_GOLD_ORE)
+				.add(Blocks.DEEPSLATE_IRON_ORE)
+				.add(Blocks.DEEPSLATE_LAPIS_ORE)
+				.add(Blocks.DEEPSLATE_REDSTONE_ORE);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORES_IN_GROUND_NETHERRACK)
+				.add(Blocks.NETHER_GOLD_ORE)
+				.add(Blocks.NETHER_QUARTZ_ORE);
+		getOrCreateTagBuilder(ConventionalBlockTags.ORES_IN_GROUND_STONE)
+				.add(Blocks.COAL_ORE)
+				.add(Blocks.COPPER_ORE)
+				.add(Blocks.DIAMOND_ORE)
+				.add(Blocks.EMERALD_ORE)
+				.add(Blocks.GOLD_ORE)
+				.add(Blocks.IRON_ORE)
+				.add(Blocks.LAPIS_ORE)
+				.add(Blocks.REDSTONE_ORE);
 
 		getOrCreateTagBuilder(ConventionalBlockTags.WOODEN_CHESTS)
 				.add(Blocks.CHEST)
 				.add(Blocks.TRAPPED_CHEST);
+		getOrCreateTagBuilder(ConventionalBlockTags.TRAPPED_CHESTS)
+				.add(Blocks.TRAPPED_CHEST);
+		getOrCreateTagBuilder(ConventionalBlockTags.ENDER_CHESTS)
+				.add(Blocks.ENDER_CHEST);
 		getOrCreateTagBuilder(ConventionalBlockTags.CHESTS)
 				.addTag(ConventionalBlockTags.WOODEN_CHESTS)
-				.add(Blocks.ENDER_CHEST);
+				.addTag(ConventionalBlockTags.TRAPPED_CHESTS)
+				.addTag(ConventionalBlockTags.ENDER_CHESTS);
 		getOrCreateTagBuilder(ConventionalBlockTags.BOOKSHELVES)
 				.add(Blocks.BOOKSHELF);
 		generateGlassTags();
@@ -112,6 +197,8 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 
 		generateSandstoneTags();
 
+		generateFenceAndFenceGateTags();
+
 		generateDyedTags();
 
 		generateStorageTags();
@@ -121,6 +208,8 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 		generateHeadTags();
 
 		generateMiscTags();
+
+		generateTagAlias();
 
 		generateBackwardsCompatTags();
 	}
@@ -143,7 +232,49 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 		getOrCreateTagBuilder(ConventionalBlockTags.HIDDEN_FROM_RECIPE_VIEWERS); // Generate tag so others can see it exists through JSON.
 	}
 
+	private void generateFenceAndFenceGateTags() {
+		getOrCreateTagBuilder(ConventionalBlockTags.WOODEN_FENCES)
+				.add(Blocks.OAK_FENCE)
+				.add(Blocks.SPRUCE_FENCE)
+				.add(Blocks.BIRCH_FENCE)
+				.add(Blocks.JUNGLE_FENCE)
+				.add(Blocks.ACACIA_FENCE)
+				.add(Blocks.DARK_OAK_FENCE)
+				.add(Blocks.CRIMSON_FENCE)
+				.add(Blocks.WARPED_FENCE)
+				.add(Blocks.MANGROVE_FENCE)
+				.add(Blocks.BAMBOO_FENCE)
+				.add(Blocks.CHERRY_FENCE);
+		getOrCreateTagBuilder(ConventionalBlockTags.NETHER_BRICK_FENCES)
+				.add(Blocks.NETHER_BRICK_FENCE);
+		getOrCreateTagBuilder(ConventionalBlockTags.FENCES)
+				.addOptionalTag(ConventionalBlockTags.WOODEN_FENCES)
+				.addOptionalTag(ConventionalBlockTags.NETHER_BRICK_FENCES);
+		getOrCreateTagBuilder(ConventionalBlockTags.WOODEN_FENCE_GATES)
+				.add(Blocks.OAK_FENCE_GATE)
+				.add(Blocks.SPRUCE_FENCE_GATE)
+				.add(Blocks.BIRCH_FENCE_GATE)
+				.add(Blocks.JUNGLE_FENCE_GATE)
+				.add(Blocks.ACACIA_FENCE_GATE)
+				.add(Blocks.DARK_OAK_FENCE_GATE)
+				.add(Blocks.CRIMSON_FENCE_GATE)
+				.add(Blocks.WARPED_FENCE_GATE)
+				.add(Blocks.MANGROVE_FENCE_GATE)
+				.add(Blocks.BAMBOO_FENCE_GATE)
+				.add(Blocks.CHERRY_FENCE_GATE);
+		getOrCreateTagBuilder(ConventionalBlockTags.FENCE_GATES)
+				.addOptionalTag(ConventionalBlockTags.WOODEN_FENCE_GATES);
+	}
+
 	private void generateSandstoneTags() {
+		getOrCreateTagBuilder(ConventionalBlockTags.COLORLESS_SANDS)
+				.add(Blocks.SAND);
+		getOrCreateTagBuilder(ConventionalBlockTags.RED_SANDS)
+				.add(Blocks.RED_SAND);
+		getOrCreateTagBuilder(ConventionalBlockTags.SANDS)
+				.addOptionalTag(ConventionalBlockTags.COLORLESS_SANDS)
+				.addOptionalTag(ConventionalBlockTags.RED_SANDS);
+
 		getOrCreateTagBuilder(ConventionalBlockTags.SANDSTONE_BLOCKS)
 				.addOptionalTag(ConventionalBlockTags.UNCOLORED_SANDSTONE_BLOCKS)
 				.addOptionalTag(ConventionalBlockTags.RED_SANDSTONE_BLOCKS);
@@ -514,7 +645,9 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 				.add(Blocks.STRIPPED_MANGROVE_LOG)
 				.add(Blocks.STRIPPED_OAK_LOG)
 				.add(Blocks.STRIPPED_PALE_OAK_LOG)
-				.add(Blocks.STRIPPED_SPRUCE_LOG);
+				.add(Blocks.STRIPPED_SPRUCE_LOG)
+				.add(Blocks.STRIPPED_CRIMSON_STEM)
+				.add(Blocks.STRIPPED_WARPED_STEM);
 
 		getOrCreateTagBuilder(ConventionalBlockTags.STRIPPED_WOODS)
 				.add(Blocks.STRIPPED_ACACIA_WOOD)
@@ -525,7 +658,9 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 				.add(Blocks.STRIPPED_MANGROVE_WOOD)
 				.add(Blocks.STRIPPED_OAK_WOOD)
 				.add(Blocks.STRIPPED_PALE_OAK_WOOD)
-				.add(Blocks.STRIPPED_SPRUCE_WOOD);
+				.add(Blocks.STRIPPED_SPRUCE_WOOD)
+				.add(Blocks.STRIPPED_CRIMSON_HYPHAE)
+				.add(Blocks.STRIPPED_WARPED_HYPHAE);
 	}
 
 	private void generateHeadTags() {
@@ -544,6 +679,21 @@ public final class BlockTagGenerator extends FabricTagProvider.BlockTagProvider 
 				.add(Blocks.PIGLIN_WALL_HEAD)
 				.add(Blocks.DRAGON_HEAD)
 				.add(Blocks.DRAGON_WALL_HEAD);
+	}
+
+	private void generateTagAlias() {
+		aliasGroup("ores/coal").add(BlockTags.COAL_ORES, ConventionalBlockTags.COAL_ORES);
+		aliasGroup("ores/copper").add(BlockTags.COPPER_ORES, ConventionalBlockTags.COPPER_ORES);
+		aliasGroup("ores/diamond").add(BlockTags.DIAMOND_ORES, ConventionalBlockTags.DIAMOND_ORES);
+		aliasGroup("ores/emerald").add(BlockTags.EMERALD_ORES, ConventionalBlockTags.EMERALD_ORES);
+		aliasGroup("ores/gold").add(BlockTags.GOLD_ORES, ConventionalBlockTags.GOLD_ORES);
+		aliasGroup("ores/iron").add(BlockTags.IRON_ORES, ConventionalBlockTags.IRON_ORES);
+		aliasGroup("ores/lapis").add(BlockTags.LAPIS_ORES, ConventionalBlockTags.LAPIS_ORES);
+		aliasGroup("ores/redstone").add(BlockTags.REDSTONE_ORES, ConventionalBlockTags.REDSTONE_ORES);
+
+		aliasGroup("fences").add(BlockTags.FENCES, ConventionalBlockTags.FENCES);
+		aliasGroup("fences/wooden").add(BlockTags.WOODEN_FENCES, ConventionalBlockTags.WOODEN_FENCES);
+		aliasGroup("fence_gates").add(BlockTags.FENCE_GATES, ConventionalBlockTags.FENCE_GATES);
 	}
 
 	private void generateBackwardsCompatTags() {

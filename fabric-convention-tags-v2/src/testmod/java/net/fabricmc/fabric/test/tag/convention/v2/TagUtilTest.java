@@ -64,8 +64,12 @@ public class TagUtilTest implements ModInitializer {
 			ConventionalBiomeTags.IS_SAVANNA_TREE,
 			ConventionalBiomeTags.IS_VEGETATION_DENSE,
 			ConventionalBiomeTags.IS_VEGETATION_DENSE_OVERWORLD,
+			ConventionalBiomeTags.IS_VEGETATION_DENSE_NETHER,
+			ConventionalBiomeTags.IS_VEGETATION_DENSE_END,
 			ConventionalBiomeTags.IS_VEGETATION_SPARSE,
 			ConventionalBiomeTags.IS_VEGETATION_SPARSE_OVERWORLD,
+			ConventionalBiomeTags.IS_VEGETATION_SPARSE_NETHER,
+			ConventionalBiomeTags.IS_VEGETATION_SPARSE_END,
 
 			ConventionalBlockTags.RED_SANDSTONE_BLOCKS,
 			ConventionalBlockTags.RED_SANDSTONE_SLABS,
@@ -74,6 +78,7 @@ public class TagUtilTest implements ModInitializer {
 			ConventionalBlockTags.UNCOLORED_SANDSTONE_SLABS,
 			ConventionalBlockTags.UNCOLORED_SANDSTONE_STAIRS,
 
+			ConventionalItemTags.BOTTLE_POTIONS,
 			ConventionalItemTags.RED_SANDSTONE_BLOCKS,
 			ConventionalItemTags.RED_SANDSTONE_SLABS,
 			ConventionalItemTags.RED_SANDSTONE_STAIRS,
