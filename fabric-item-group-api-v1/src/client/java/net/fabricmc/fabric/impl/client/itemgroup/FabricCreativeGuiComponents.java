@@ -35,7 +35,7 @@ import net.minecraft.util.Identifier;
 import net.fabricmc.fabric.impl.itemgroup.FabricItemGroupImpl;
 
 public class FabricCreativeGuiComponents {
-	private static final Identifier BUTTON_TEX = Identifier.of("fabric", "textures/gui/creative_buttons.png");
+	private static final Identifier CREATIVE_FABRIC_TEX = Identifier.of("fabric", "textures/gui/creative.png");
 	private static final double TABS_PER_PAGE = FabricItemGroupImpl.TABS_PER_PAGE;
 	public static final Set<ItemGroup> COMMON_GROUPS = Set.of(ItemGroups.SEARCH, ItemGroups.INVENTORY, ItemGroups.HOTBAR, ItemGroups.OPERATOR).stream()
 			.map(Registries.ITEM_GROUP::getValueOrThrow)
@@ -66,12 +66,16 @@ public class FabricCreativeGuiComponents {
 
 			int u = active && this.isHovered() ? 22 : 0;
 			int v = active ? 0 : 12;
-			drawContext.drawTexture(RenderLayer::getGuiTextured, BUTTON_TEX, this.getX(), this.getY(), u + (type == Type.NEXT ? 11 : 0), v, 11, 12, 256, 256);
+			drawContext.drawTexture(RenderLayer::getGuiTextured, CREATIVE_FABRIC_TEX, this.getX(), this.getY(), u + (type == Type.NEXT ? 11 : 0), v, 11, 12, 256, 256);
 
 			if (this.isHovered()) {
 				drawContext.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.translatable("fabric.gui.creativeTabPage", screen.getCurrentPage() + 1, getPageCount()), mouseX, mouseY);
 			}
 		}
+	}
+
+	public static void renderSearchBar(DrawContext drawContext, int x, int y) {
+		drawContext.drawTexture(RenderLayer::getGuiTextured, CREATIVE_FABRIC_TEX, x, y, 44, 0, 85, 12, 256, 256);
 	}
 
 	public enum Type {

@@ -28,10 +28,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen.CreativeScreenHandler;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
@@ -68,7 +73,7 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 		}
 	}
 
-	@Inject(method = "init", at = @At("RETURN"))
+	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;setEditableColor(I)V", shift = At.Shift.AFTER))
 	private void init(CallbackInfo info) {
 		currentPage = getPage(selectedTab);
 
@@ -196,5 +201,38 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 
 		setSelectedTab(itemGroup);
 		return true;
+	}
+
+	@Unique
+	private boolean showSearchBar = false;
+
+	@Inject(method = "setSelectedTab", at = @At("TAIL"))
+	void searchBarBackgroundDeterminant(ItemGroup group, CallbackInfo ci) {
+		if (group.getType() == ItemGroup.Type.SEARCH) {
+			showSearchBar = true;
+		} else {
+			showSearchBar = false;
+		}
+	}
+
+	@Inject(method = "drawBackground", at = @At("TAIL"))
+	public void renderSearchBar(DrawContext context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
+		if (showSearchBar) {
+			int xpos = x + 166 - 86;
+			int ypos = y + 4;
+			FabricCreativeGuiComponents.renderSearchBar(context, xpos, ypos);
+		}
+	}
+
+	@WrapOperation(
+			method = "init",
+			at = @At(
+					value = "NEW",
+					target = "net/minecraft/client/gui/widget/TextFieldWidget"
+			)
+	)
+	private TextFieldWidget shortenSearchBarTextField(TextRenderer textRenderer, int x, int y, int width, int height, Text text, Operation<TextFieldWidget> original) {
+		// Modify only the width 80 -> 75
+		return original.call(textRenderer, x, y, 75, height, text);
 	}
 }
