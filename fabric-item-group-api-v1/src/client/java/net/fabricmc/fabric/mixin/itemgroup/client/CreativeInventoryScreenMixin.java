@@ -37,10 +37,12 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen.CreativeSc
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import net.fabricmc.fabric.api.client.itemgroup.v1.FabricCreativeInventoryScreen;
 import net.fabricmc.fabric.impl.client.itemgroup.FabricCreativeGuiComponents;
@@ -204,21 +206,20 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	}
 
 	@Unique
-	private boolean showSearchBar = false;
+	private boolean displaySearchBarModification = false;
 
 	@Inject(method = "setSelectedTab", at = @At("TAIL"))
 	void searchBarBackgroundDeterminant(ItemGroup group, CallbackInfo ci) {
-		if (group.getType() == ItemGroup.Type.SEARCH) {
-			showSearchBar = true;
-		} else {
-			showSearchBar = false;
-		}
+		displaySearchBarModification = (group.getType() == ItemGroup.Type.SEARCH) && hasAdditionalPages();
 	}
+
+	@Unique
+	private static final Identifier CREATIVE_SEARCH_TAB = ItemGroup.getTabTextureId("item_search");
 
 	@Inject(method = "drawBackground", at = @At("TAIL"))
 	public void renderSearchBar(DrawContext context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
-		if (showSearchBar) {
-			FabricCreativeGuiComponents.renderSearchBar((CreativeInventoryScreen) (Object) this, context, x + 80, y + 4);
+		if (displaySearchBarModification) {
+			context.drawTexture(RenderLayer::getGuiTextured, CREATIVE_SEARCH_TAB, x + 161, y + 4, 166, 4, 5, 12, 256, 256);
 		}
 	}
 
