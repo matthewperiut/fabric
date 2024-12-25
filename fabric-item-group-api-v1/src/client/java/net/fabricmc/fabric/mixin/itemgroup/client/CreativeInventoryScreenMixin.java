@@ -218,9 +218,7 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	@Inject(method = "drawBackground", at = @At("TAIL"))
 	public void renderSearchBar(DrawContext context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
 		if (showSearchBar) {
-			int xpos = x + 80;
-			int ypos = y + 4;
-			FabricCreativeGuiComponents.renderSearchBar(context, xpos, ypos);
+			FabricCreativeGuiComponents.renderSearchBar((CreativeInventoryScreen) (Object) this, context, x + 80, y + 4);
 		}
 	}
 
@@ -233,6 +231,10 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	)
 	private TextFieldWidget shortenSearchBarTextField(TextRenderer textRenderer, int x, int y, int width, int height, Text text, Operation<TextFieldWidget> original) {
 		// Modify only the available text space width to be 5 pixels shorter
-		return original.call(textRenderer, x, y, width - 5, height, text);
+		if (hasAdditionalPages()) {
+			return original.call(textRenderer, x, y, width - 5, height, text);
+		} else {
+			return original.call(textRenderer, x, y, width, height, text);
+		}
 	}
 }

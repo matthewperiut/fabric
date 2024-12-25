@@ -21,6 +21,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.fabricmc.fabric.api.client.itemgroup.v1.FabricCreativeInventoryScreen;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -74,8 +76,11 @@ public class FabricCreativeGuiComponents {
 		}
 	}
 
-	public static void renderSearchBar(DrawContext drawContext, int x, int y) {
+	public static void renderSearchBar(CreativeInventoryScreen screen, DrawContext drawContext, int x, int y) {
 		drawContext.drawTexture(RenderLayer::getGuiTextured, CREATIVE_FABRIC_TEX, x, y, 44, 0, 85, 12, 256, 256);
+		if (!screen.hasAdditionalPages()) {
+			drawContext.drawTexture(RenderLayer::getGuiTextured, CREATIVE_FABRIC_TEX, x + 84, y, 123, 0, 6, 12, 256, 256);
+		}
 	}
 
 	public enum Type {
