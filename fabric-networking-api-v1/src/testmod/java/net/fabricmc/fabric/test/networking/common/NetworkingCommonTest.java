@@ -19,6 +19,9 @@ package net.fabricmc.fabric.test.networking.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -36,6 +39,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.test.networking.NetworkingTestmods;
 
 public class NetworkingCommonTest implements ModInitializer {
+	private static final Logger LOGGER = LoggerFactory.getLogger(NetworkingCommonTest.class);
 	private boolean firstLoad = true;
 	private List<String> receivedPlay = new ArrayList<>();
 	private List<String> receivedConfig = new ArrayList<>();
@@ -99,6 +103,11 @@ public class NetworkingCommonTest implements ModInitializer {
 		server.execute(new Runnable() {
 			@Override
 			public void run() {
+				if (!server.isRunning()) {
+					LOGGER.warn("Server is no longer running, cannot execute task");
+					return;
+				}
+
 				if (server.getTicks() >= targetTime) {
 					runnable.run();
 					return;
