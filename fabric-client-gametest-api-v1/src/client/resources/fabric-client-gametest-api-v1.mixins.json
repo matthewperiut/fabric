@@ -26,6 +26,9 @@
     "ClientChunkMapAccessor",
     "ClientWorldAccessor",
     "CreateWorldScreenAccessor",
-    "CreateWorldScreenMixin"
+    "CreateWorldScreenMixin",
+    "FramebufferMixin",
+    "MonitorTrackerMixin",
+    "RenderTickCounterConstantAccessor"
   ]
 }
