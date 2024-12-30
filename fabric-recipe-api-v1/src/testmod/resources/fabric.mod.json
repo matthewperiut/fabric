@@ -13,6 +13,9 @@
       "net.fabricmc.fabric.test.recipe.ingredient.IngredientMatchTests",
       "net.fabricmc.fabric.test.recipe.ingredient.SerializationTests",
       "net.fabricmc.fabric.test.recipe.ingredient.ShapelessRecipeMatchTests"
+    ],
+    "client": [
+      "net.fabricmc.fabric.test.recipe.ingredient.client.ClientCustomIngredientSyncTests"
     ]
   }
 }
