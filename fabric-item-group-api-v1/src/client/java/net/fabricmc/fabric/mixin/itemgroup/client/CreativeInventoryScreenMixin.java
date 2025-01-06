@@ -31,12 +31,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen.CreativeScreenHandler;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
@@ -219,7 +219,7 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	@Inject(method = "drawBackground", at = @At("TAIL"))
 	public void renderSearchBar(DrawContext context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
 		if (displaySearchBarModification) {
-			context.drawTexture(RenderLayer::getGuiTextured, CREATIVE_SEARCH_TAB, x + 161, y + 4, 166, 4, 5, 12, 256, 256);
+			context.drawTexture(RenderLayer::getGuiTextured, CREATIVE_SEARCH_TAB, x + 161, y + 4, 166, 4, 6, 12, 256, 256);
 		}
 	}
 
