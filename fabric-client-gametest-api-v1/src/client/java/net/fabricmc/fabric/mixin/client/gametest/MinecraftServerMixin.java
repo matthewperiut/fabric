@@ -23,10 +23,13 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.thread.ThreadExecutor;
 
+import net.fabricmc.fabric.impl.client.gametest.NetworkSynchronizer;
 import net.fabricmc.fabric.impl.client.gametest.ThreadingImpl;
 
 @Mixin(MinecraftServer.class)
@@ -60,12 +63,19 @@ public class MinecraftServerMixin {
 
 	@Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;runTasksTillTickEnd()V"))
 	private void preRunTasks(CallbackInfo ci) {
-		ThreadingImpl.enterPhase(ThreadingImpl.PHASE_SERVER_TASKS);
+		if (!NetworkSynchronizer.DISABLED) {
+			ThreadingImpl.enterPhase(ThreadingImpl.PHASE_SERVER_TASKS);
+		}
 	}
 
 	@Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;runTasksTillTickEnd()V", shift = At.Shift.AFTER))
 	private void postRunTasks(CallbackInfo ci) {
-		ThreadingImpl.enterPhase(ThreadingImpl.PHASE_CLIENT_TASKS);
+		NetworkSynchronizer.SERVERBOUND.waitForPacketHandlers((ThreadExecutor<?>) (Object) this);
+
+		if (!NetworkSynchronizer.DISABLED) {
+			ThreadingImpl.enterPhase(ThreadingImpl.PHASE_CLIENT_TASKS);
+		}
+
 		// client tasks happen here
 
 		ThreadingImpl.serverCanAcceptTasks = true;
@@ -90,10 +100,21 @@ public class MinecraftServerMixin {
 		ThreadingImpl.enterPhase(ThreadingImpl.PHASE_TICK);
 	}
 
+	@Inject(method = "canExecute(Lnet/minecraft/server/ServerTask;)Z", at = @At("HEAD"), cancellable = true)
+	private void alwaysExecuteNetworkTask(CallbackInfoReturnable<Boolean> cir) {
+		if (NetworkSynchronizer.SERVERBOUND.isRunningNetworkTasks()) {
+			cir.setReturnValue(true);
+		}
+	}
+
 	@Unique
 	private void deregisterServer() {
 		ThreadingImpl.serverCanAcceptTasks = false;
 		ThreadingImpl.PHASER.arriveAndDeregister();
 		ThreadingImpl.isServerRunning = false;
+
+		if (!ThreadingImpl.isGameCrashed()) {
+			NetworkSynchronizer.SERVERBOUND.reset();
+		}
 	}
 }

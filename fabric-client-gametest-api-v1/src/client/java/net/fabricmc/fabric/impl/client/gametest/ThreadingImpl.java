@@ -49,13 +49,13 @@ import net.minecraft.client.MinecraftClient;
  * released while leaving {@linkplain #taskToRun} as {@code null}, which they will interpret to mean they are to
  * continue into {@linkplain #PHASE_TICK}.
  *
- * <p>The reason these phases were chosen are to make client-server interaction in singleplayer as consistent as
- * possible. The task queues are when most packets are handled, and without them being run in sequence it would be
- * unspecified whether a packet would be handled on the current tick until the next one. The server task queue is before
- * the client so that changes on the server appear on the client more readily. The test phase is run after the task
- * queues rather than at the end of the physical tick (i.e. {@code MinecraftClient}'s and {@code MinecraftServer}'s
- * {@code tick} methods), for no particular reason other than to avoid needing a 5th phase, and having a power of 2
- * number of phases is convenient when using {@linkplain Phaser}, as it doesn't break when the phase counter overflows.
+ * <p>The reason these phases were chosen are to make client-server communication as consistent as possible. The task
+ * queues are when most packets are handled, and without them being run in sequence it would be unspecified whether a
+ * packet would be handled on the current tick until the next one. The server task queue is before the client so that
+ * changes on the server appear on the client more readily. The test phase is run after the task queues rather than at
+ * the end of the physical tick (i.e. {@code MinecraftClient}'s and {@code MinecraftServer}'s {@code tick} methods), for
+ * no particular reason other than to avoid needing a 5th phase, and having a power of 2 number of phases is convenient
+ * when using {@linkplain Phaser}, as it doesn't break when the phase counter overflows.
  *
  * <p>Other challenges include that a client or server can be started during {@linkplain #PHASE_TEST} but haven't
  * reached their semaphore code yet meaning they are unable to accept tasks. This is solved by setting a flag to true
@@ -104,13 +104,25 @@ public final class ThreadingImpl {
 	private static volatile boolean gameCrashed = false;
 
 	public static void enterPhase(int phase) {
-		while (enablePhases && (PHASER.getPhase() & PHASE_MASK) != phase) {
+		while (enablePhases && getNextPhase() != phase) {
 			PHASER.arriveAndAwaitAdvance();
 		}
 
 		if (enablePhases) {
 			PHASER.arriveAndAwaitAdvance();
 		}
+	}
+
+	public static int getCurrentPhase() {
+		return (getNextPhase() - 1) & PHASE_MASK;
+	}
+
+	private static int getNextPhase() {
+		return PHASER.getPhase() & PHASE_MASK;
+	}
+
+	public static boolean isGameCrashed() {
+		return gameCrashed;
 	}
 
 	public static void setGameCrashed() {
