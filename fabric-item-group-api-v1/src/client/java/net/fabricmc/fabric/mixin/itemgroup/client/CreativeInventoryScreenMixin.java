@@ -74,11 +74,11 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	private void init(CallbackInfo info) {
 		currentPage = getPage(selectedTab);
 
-		int xpos = x + 169;
+		int xpos = x + 171;
 		int ypos = y + 4;
 
 		CreativeInventoryScreen self = (CreativeInventoryScreen) (Object) this;
-		addDrawableChild(new FabricCreativeGuiComponents.ItemGroupButtonWidget(xpos + 11, ypos, FabricCreativeGuiComponents.Type.NEXT, self));
+		addDrawableChild(new FabricCreativeGuiComponents.ItemGroupButtonWidget(xpos + 10, ypos, FabricCreativeGuiComponents.Type.NEXT, self));
 		addDrawableChild(new FabricCreativeGuiComponents.ItemGroupButtonWidget(xpos, ypos, FabricCreativeGuiComponents.Type.PREVIOUS, self));
 	}
 
@@ -198,23 +198,5 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 
 		setSelectedTab(itemGroup);
 		return true;
-	}
-
-	@Unique
-	private boolean displaySearchBarModification = false;
-
-	@Inject(method = "setSelectedTab", at = @At("TAIL"))
-	void searchBarBackgroundDeterminant(ItemGroup group, CallbackInfo ci) {
-		displaySearchBarModification = (group.getType() == ItemGroup.Type.SEARCH) && hasAdditionalPages();
-	}
-
-	@Unique
-	private static final Identifier CREATIVE_SEARCH_TAB = ItemGroup.getTabTextureId("item_search");
-
-	@Inject(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;render(Lnet/minecraft/client/gui/DrawContext;IIF)V"))
-	public void renderSearchBarSpacing(DrawContext context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
-		if (displaySearchBarModification) {
-			context.drawTexture(RenderLayer::getGuiTextured, CREATIVE_SEARCH_TAB, x + 164, y + 4, 166, 4, 6, 12, 256, 256);
-		}
 	}
 }
