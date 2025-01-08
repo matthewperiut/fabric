@@ -79,7 +79,7 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	private void init(CallbackInfo info) {
 		currentPage = getPage(selectedTab);
 
-		int xpos = x + 166;
+		int xpos = x + 169;
 		int ypos = y + 4;
 
 		CreativeInventoryScreen self = (CreativeInventoryScreen) (Object) this;
@@ -219,23 +219,7 @@ public abstract class CreativeInventoryScreenMixin extends HandledScreen<Creativ
 	@Inject(method = "drawBackground", at = @At("TAIL"))
 	public void renderSearchBar(DrawContext context, float delta, int mouseX, int mouseY, CallbackInfo ci) {
 		if (displaySearchBarModification) {
-			context.drawTexture(RenderLayer::getGuiTextured, CREATIVE_SEARCH_TAB, x + 161, y + 4, 166, 4, 6, 12, 256, 256);
-		}
-	}
-
-	@WrapOperation(
-			method = "init",
-			at = @At(
-					value = "NEW",
-					target = "net/minecraft/client/gui/widget/TextFieldWidget"
-			)
-	)
-	private TextFieldWidget shortenSearchBarTextField(TextRenderer textRenderer, int x, int y, int width, int height, Text text, Operation<TextFieldWidget> original) {
-		// Modify only the available text space width to be 5 pixels shorter
-		if (hasAdditionalPages()) {
-			return original.call(textRenderer, x, y, width - 5, height, text);
-		} else {
-			return original.call(textRenderer, x, y, width, height, text);
+			context.drawTexture(RenderLayer::getGuiTextured, CREATIVE_SEARCH_TAB, x + 164, y + 4, 166, 4, 6, 12, 256, 256);
 		}
 	}
 }
