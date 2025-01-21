@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
@@ -100,7 +101,7 @@ abstract class AttachmentTargetsMixin implements AttachmentTargetImpl {
 		if (this.fabric_shouldTryToSync() && this.fabric_dataAttachments != null) {
 			this.fabric_dataAttachments.forEach((type, value) -> {
 				if (type.isSynced()) {
-					acknowledgeSynced(type, value);
+					acknowledgeSynced(type, value, wrapperLookup);
 				}
 			});
 		}
@@ -117,8 +118,9 @@ abstract class AttachmentTargetsMixin implements AttachmentTargetImpl {
 	}
 
 	@Unique
-	private void acknowledgeSynced(AttachmentType<?> type, Object value) {
-		acknowledgeSyncedEntry(type, AttachmentChange.create(fabric_getSyncTargetInfo(), type, value, fabric_getDynamicRegistryManager()));
+	private void acknowledgeSynced(AttachmentType<?> type, Object value, RegistryWrapper.WrapperLookup wrapperLookup) {
+		DynamicRegistryManager dynamicRegistryManager = (wrapperLookup instanceof DynamicRegistryManager drm) ? drm : fabric_getDynamicRegistryManager();
+		acknowledgeSyncedEntry(type, AttachmentChange.create(fabric_getSyncTargetInfo(), type, value, dynamicRegistryManager));
 	}
 
 	@Unique

@@ -20,12 +20,16 @@ import com.mojang.serialization.Codec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
@@ -36,6 +40,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 
 public class AttachmentTestMod implements ModInitializer {
 	public static final String MOD_ID = "fabric-data-attachment-api-v1-testmod";
@@ -92,5 +97,19 @@ public class AttachmentTestMod implements ModInitializer {
 				GenerationStep.Feature.VEGETAL_DECORATION,
 				RegistryKey.of(RegistryKeys.PLACED_FEATURE, Identifier.of(MOD_ID, "set_attachment"))
 		);
+
+		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+			if (player.getStackInHand(hand).getItem() == Items.CARROT) {
+				BlockEntity blockEntity = world.getBlockEntity(hitResult.getBlockPos());
+
+				if (blockEntity != null) {
+					blockEntity.setAttached(SYNCED_WITH_ALL, true);
+					player.sendMessage(Text.literal("Attached"), false);
+					return ActionResult.SUCCESS;
+				}
+			}
+
+			return ActionResult.PASS;
+		});
 	}
 }
