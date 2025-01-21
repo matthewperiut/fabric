@@ -24,6 +24,7 @@ import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
@@ -116,7 +117,9 @@ public interface ClientGameTestContext {
 	 * @param name The name of the screenshot
 	 * @return The {@link Path} to the screenshot
 	 */
-	Path takeScreenshot(String name);
+	default Path takeScreenshot(String name) {
+		return takeScreenshot(TestScreenshotOptions.of(name));
+	}
 
 	/**
 	 * Takes a screenshot with the given options.
@@ -125,6 +128,48 @@ public interface ClientGameTestContext {
 	 * @return The {@link Path} to the screenshot
 	 */
 	Path takeScreenshot(TestScreenshotOptions options);
+
+	/**
+	 * Takes a screenshot, matches it against the template image, and throws if it doesn't match. This method does a
+	 * fuzzy match, see {@link TestScreenshotComparisonOptions} for details.
+	 *
+	 * @param templateImage The path to the template image. The template image should be in the {@code templates}
+	 *                      directory in the resources directory of the mod which registers the gametest
+	 */
+	default void assertScreenshotEquals(String templateImage) {
+		assertScreenshotEquals(TestScreenshotComparisonOptions.of(templateImage));
+	}
+
+	/**
+	 * Takes a screenshot, matches it against a template image, and throws if it doesn't match. The exact details of
+	 * these steps are specified in the given options, see the documentation for that class for details.
+	 *
+	 * @param options The options for the screenshot comparison
+	 */
+	void assertScreenshotEquals(TestScreenshotComparisonOptions options);
+
+	/**
+	 * Takes a screenshot, searches for the template image in that screenshot, and throws if it wasn't found. This
+	 * method searches with a fuzzy match, see {@link TestScreenshotComparisonOptions} for details.
+	 *
+	 * @param templateImage The path to the template image. The template image should be in the {@code templates}
+	 *                      directory in the resources directory of the mod which registers the gametest
+	 * @return The coordinates of the template image that was found. If there are multiple matches, returns one
+	 *         arbitrarily
+	 */
+	default Vector2i assertScreenshotContains(String templateImage) {
+		return assertScreenshotContains(TestScreenshotComparisonOptions.of(templateImage));
+	}
+
+	/**
+	 * Takes a screenshot, searches for a template image in that screenshot, and throws if it wasn't found. The exact
+	 * details of these steps are specified in the given options, see the documentation for that class for details.
+	 *
+	 * @param options The options for screenshot comparison
+	 * @return The coordinates of the template image that was found. If there are multiple matches, returns one
+	 *         arbitrarily
+	 */
+	Vector2i assertScreenshotContains(TestScreenshotComparisonOptions options);
 
 	/**
 	 * Gets the input handler used to simulate inputs to the client.
